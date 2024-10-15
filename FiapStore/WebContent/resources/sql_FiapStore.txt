@@ -1,0 +1,65 @@
+drop sequence SQ_ID_PRODUTO;
+drop sequence SQ_ID_CATEGORIA;
+drop sequence sq_id_usuario;
+drop table tb_produto;
+drop table tb_categoria;
+drop table tb_usuario;
+drop trigger tr_ins_usuario;
+drop trigger TR_INS_CATEGORIA;
+drop trigger TR_INS_produto;
+
+create table TB_USUARIO(
+id number not null primary key,
+email varchar2(45) not null, 
+senha varchar2(45) not null);
+
+create table tb_categoria(
+id_categoria number not null primary key,
+nome_categoria varchar2(45));
+
+create table tb_produto (
+id_produto number not null primary key,
+nome_produto varchar2(100),
+valor number,
+dt_fabricacao date,
+quantidade number,
+id_categoria number, 
+foreign key (id_categoria) references tb_categoria(id_categoria));
+
+create sequence SQ_ID_PRODUTO start with 1 INCREMENT by 1;
+create sequence SQ_ID_CATEGORIA start with 1 INCREMENT by 1;
+create sequence SQ_ID_USUARIO start with 1 INCREMENT by 1;
+
+CREATE OR REPLACE TRIGGER TR_INS_PRODUTO
+BEFORE INSERT ON tb_produto FOR EACH ROW       
+BEGIN
+  SELECT SQ_ID_PRODUTO.nextval
+  INTO :NEW.id_produto
+  FROM DUAL;
+END;
+/
+
+CREATE OR REPLACE TRIGGER TR_INS_CATEGORIA
+BEFORE INSERT ON tb_categoria FOR EACH ROW       
+BEGIN
+  SELECT SQ_ID_CATEGORIA.nextval
+  INTO :NEW.id_categoria
+  FROM DUAL;
+END;
+/
+
+CREATE OR REPLACE TRIGGER TR_INS_USUARIO
+BEFORE INSERT ON TB_USUARIO FOR EACH ROW       
+BEGIN
+  SELECT SQ_ID_USUARIO.nextval
+  INTO :NEW.ID
+  FROM DUAL;
+END;
+/
+
+insert into tb_categoria (nome_categoria) values ('Eletrônicos');
+insert into tb_categoria (nome_categoria) values ('Alimentos');
+insert into tb_categoria (nome_categoria) values ('Brinquedos');
+insert into tb_categoria (nome_categoria) values ('Vestuário');
+
+COMMIT;

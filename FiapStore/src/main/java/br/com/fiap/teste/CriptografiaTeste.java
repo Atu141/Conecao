@@ -1,17 +1,16 @@
 package br.com.fiap.teste;
 
-
-import br.com.fiap.factory.DAOFactory;
-import br.com.fiap.model.Usuario;
+import br.com.fiap.util.CriptografiaUtils;
 
 public class CriptografiaTeste {
 
 	public static void main(String[] args) {
-
-		Usuario user = new Usuario("rm98845", "123456");
-		DAOFactory.getUsuarioDAO().inserirUsuario(user);
-		
-		
+		try {
+			System.out.println(CriptografiaUtils.criptografar("123456"));
+			System.out.println(CriptografiaUtils.criptografar("123456"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }

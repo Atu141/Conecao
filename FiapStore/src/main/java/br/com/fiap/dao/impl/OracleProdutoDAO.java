@@ -23,7 +23,7 @@ public class OracleProdutoDAO implements ProdutoDAO {
 		PreparedStatement stmt = null;
 		try {
 			conexao = ConnectionFactory.getInstance().getConnection();
-			String sql = "INSERT INTO TB_PRODUTOS (NOME_PRODUTO, QUANTIDADE, VALOR, DT_FABRICACAO, ID_CATEGORIA) VALUES (?, ?, ?, ?, ?)";
+			String sql = "INSERT INTO TB_PRODUTO (NOME_PRODUTO, QUANTIDADE, VALOR, DT_FABRICACAO, ID_CATEGORIA) VALUES (?, ?, ?, ?, ?)";
 			stmt = conexao.prepareStatement(sql);
 			stmt.setString(1, produto.getNome());
 			stmt.setInt(2, produto.getQuantidade());
@@ -51,7 +51,7 @@ public class OracleProdutoDAO implements ProdutoDAO {
 
 		try {
 			conexao = ConnectionFactory.getInstance().getConnection();
-			String sql = "UPDATE TB_PRODUTOS SET NOME_PRODUTO = ?, QUANTIDADE = ?, VALOR = ?, DT_FABRICACAO = ?, ID_CATEGORIA = ? WHERE ID_PRODUTO = ?";
+			String sql = "UPDATE TB_PRODUTO SET NOME_PRODUTO = ?, QUANTIDADE = ?, VALOR = ?, DT_FABRICACAO = ?, ID_CATEGORIA = ? WHERE ID_PRODUTO = ?";
 			stmt = conexao.prepareStatement(sql);
 			stmt.setString(1, produto.getNome());
 			stmt.setInt(2, produto.getQuantidade());
@@ -80,7 +80,7 @@ public class OracleProdutoDAO implements ProdutoDAO {
 		PreparedStatement stmt = null;
 		try {
 			conexao = ConnectionFactory.getInstance().getConnection();
-			String sql = "DELETE FROM TB_PRODUTOS WHERE ID_PRODUTO = ?";
+			String sql = "DELETE FROM TB_PRODUTO WHERE ID_PRODUTO = ?";
 			stmt = conexao.prepareStatement(sql);
 			stmt.setInt(1, codigo);
 			stmt.execute();
@@ -105,7 +105,7 @@ public class OracleProdutoDAO implements ProdutoDAO {
 		try {
 			conexao = ConnectionFactory.getInstance().getConnection();
 			stmt = conexao.prepareStatement(
-					"SELECT * FROM TB_PRODUTOS INNER JOIN TB_CATEGORIAS ON TB_PRODUTOS.ID_CATEGORIA = TB_CATEGORIAS.ID_CATEGORIA WHERE TB_PRODUTOS.ID_PRODUTO = ?");
+					"SELECT * FROM TB_PRODUTO INNER JOIN TB_CATEGORIA ON TB_PRODUTO.ID_CATEGORIA = TB_CATEGORIA.ID_CATEGORIA WHERE TB_PRODUTO.ID_PRODUTO = ?");
 			stmt.setInt(1, id);
 			rs = stmt.executeQuery();
 
@@ -148,7 +148,7 @@ public class OracleProdutoDAO implements ProdutoDAO {
 		try {
 			conexao = ConnectionFactory.getInstance().getConnection();
 			stmt = conexao.prepareStatement(
-					"SELECT * FROM TB_PRODUTOS INNER JOIN TB_CATEGORIAS ON TB_PRODUTOS.ID_CATEGORIA = TB_CATEGORIAS.ID_CATEGORIA");
+					"SELECT * FROM TB_PRODUTO INNER JOIN TB_CATEGORIA ON TB_PRODUTO.ID_CATEGORIA = TB_CATEGORIA.ID_CATEGORIA");
 			rs = stmt.executeQuery();
 
 			while (rs.next()) {

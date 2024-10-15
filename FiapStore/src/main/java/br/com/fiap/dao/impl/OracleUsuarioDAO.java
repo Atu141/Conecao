@@ -12,23 +12,21 @@ import br.com.fiap.model.Usuario;
 
 public class OracleUsuarioDAO implements UsuarioDAO {
 
+	private Connection conexao;
 
-	Connection conexao = ConnectionFactory.getInstance().getConnection();
 	@Override
 	public boolean validarUsuario(Usuario usuario) {
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		try {
-			
+			conexao = ConnectionFactory.getInstance().getConnection();
 			stmt = conexao.prepareStatement("SELECT * FROM TB_USUARIO WHERE EMAIL = ? AND SENHA = ?");
 			stmt.setString(1, usuario.getEmail());
 			stmt.setString(2, usuario.getSenha());
 			rs = stmt.executeQuery();
-
 			if (rs.next()) {
 				return true;
 			}
-
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -43,21 +41,4 @@ public class OracleUsuarioDAO implements UsuarioDAO {
 		return false;
 	}
 
-	public void inserirUsuario(Usuario usuario) {
-		String sql = "insert into tb_usuario(email, senha) values (?, ?)";
-		try {
-			
-	
-		PreparedStatement stmt = conexao.prepareStatement(sql);
-		stmt.setString(1, usuario.getEmail());
-		stmt.setString(2, usuario.getSenha());
-		stmt.execute();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
-
-	public OracleUsuarioDAO getUsuarioDAO() {
-		return null;
-	}
 }
