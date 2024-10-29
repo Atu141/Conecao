@@ -12,10 +12,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import br.com.fiap.dao.CategoriaDAO;
+import br.com.fiap.dao.MarcaDAO;
 import br.com.fiap.dao.ProdutoDAO;
 import br.com.fiap.exception.DBException;
 import br.com.fiap.factory.DAOFactory;
 import br.com.fiap.model.Categoria;
+import br.com.fiap.model.Marca;
 import br.com.fiap.model.Produto;
 
 @WebServlet("/produto")
@@ -24,12 +26,14 @@ public class ProdutoServlet extends HttpServlet {
 
 	private ProdutoDAO dao;
 	private CategoriaDAO categoriaDao;
+	private MarcaDAO marcaDao;
 
 	@Override
 	public void init() throws ServletException {
 		super.init();
 		dao = DAOFactory.getProdutoDAO();
 		categoriaDao = DAOFactory.getCategoriaDAO();
+		marcaDao = DAOFactory.getMarcaDAO();
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -72,6 +76,7 @@ public class ProdutoServlet extends HttpServlet {
 	private void abrirFormCadastro(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		carregarOpcoesCategoria(request);
+		carregarOpcoesMarca(request);
 		request.getRequestDispatcher("cadastro-produto.jsp").forward(request, response);
 	}
 
@@ -79,19 +84,29 @@ public class ProdutoServlet extends HttpServlet {
 		List<Categoria> lista = categoriaDao.listar();
 		request.setAttribute("categorias", lista);
 	}
+	
+	private void carregarOpcoesMarca(HttpServletRequest request) {
+		List<Marca> lista = marcaDao.listar();
+		request.setAttribute("marcas", lista);
+	}
 
 	private void abrirFormEdicao(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("codigo"));
 		Produto produto = dao.buscar(id);
+		Marca marca = marcaDao.buscar(id);
+		request.setAttribute("marca", marca);
 		request.setAttribute("produto", produto);
 		carregarOpcoesCategoria(request);
+		carregarOpcoesMarca(request);
 		request.getRequestDispatcher("edicao-produto.jsp").forward(request, response);
 	}
 
 	private void listar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		List<Produto> lista = dao.listar();
+		List<Marca> marca = marcaDao.listar();
 		request.setAttribute("produtos", lista);
+		request.setAttribute("marca", marca);
 		request.getRequestDispatcher("lista-produto.jsp").forward(request, response);
 	}
 
@@ -105,10 +120,14 @@ public class ProdutoServlet extends HttpServlet {
 			Calendar fabricacao = Calendar.getInstance();
 			fabricacao.setTime(format.parse(request.getParameter("fabricacao")));
 			int codigoCategoria = Integer.parseInt(request.getParameter("categoria"));
+			int idMarca = Integer.parseInt(request.getParameter("marca"));
 			Categoria categoria = new Categoria();
 			categoria.setCodigo(codigoCategoria);
+			Marca marca = new Marca();
+			marca.setId(idMarca);
 			Produto produto = new Produto(nome, preco, fabricacao, quantidade);
 			produto.setCategoria(categoria);
+			produto.setMarca(marca);
 			dao.cadastrar(produto);
 			request.setAttribute("msg", "Produto cadastrado!");
 		} catch (DBException db) {
@@ -131,13 +150,20 @@ public class ProdutoServlet extends HttpServlet {
 			Calendar fabricacao = Calendar.getInstance();
 			fabricacao.setTime(format.parse(request.getParameter("fabricacao")));
 			int codigoCategoria = Integer.parseInt(request.getParameter("categoria"));
+			int idMarca = Integer.parseInt(request.getParameter("marca"));
 
 			Categoria categoria = new Categoria();
 			categoria.setCodigo(codigoCategoria);
+			
+			Marca marca = marcaDao.buscar(idMarca);
+			System.out.println(idMarca);
+			System.out.println(marca.getNome());
 
 			Produto produto = new Produto(nome, preco, fabricacao, quantidade);
 			produto.setCategoria(categoria);
 			produto.setCodigo(codigo);
+			produto.setMarca(marca);
+			
 			dao.atualizar(produto);
 
 			request.setAttribute("msg", "Produto atualizado!");
