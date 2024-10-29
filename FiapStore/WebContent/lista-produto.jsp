@@ -23,24 +23,28 @@
 		</c:if>
 		<table class="table table-striped">
 			<tr>
+				<th>Código</th>
 				<th>Nome</th>
 				<th>Quantidade</th>
 				<th>Valor</th>
 				<th>Data de Fabricação</th>
 				<th>Categoria</th>
+				<th>Marca</th>
 				<th></th>
 			</tr>
-			<c:forEach items="${produtos }" var="p">
+			<c:forEach items="${produtos}" var="p">
 				<tr>
+					<td>${p.codigo}</td>
 					<td>${p.nome}</td>
 					<td>${p.quantidade}</td>
 					<td>${p.valor}</td>
-					<td><fmt:formatDate value="${p.dataFabricacao.time }"
+					<td><fmt:formatDate value="${p.dataFabricacao.time}"
 							pattern="dd/MM/yyyy" /></td>
 					<td>${p.categoria.nome}</td>
+					<td>${p.marca.nome}</td>
 					<td><c:url value="produto" var="link">
 							<c:param name="acao" value="abrir-form-edicao" />
-							<c:param name="codigo" value="${p.codigo }" />
+							<c:param name="codigo" value="${p.codigo}" />
 						</c:url> <a href="${link}" class="btn btn-primary btn-xs">Editar</a>
 						<button type="button" class="btn btn-danger btn-xs"
 							data-toggle="modal" data-target="#excluirModal"

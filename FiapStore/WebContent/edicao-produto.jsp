@@ -12,11 +12,11 @@
 <body>
 	<%@ include file="menu.jsp"%>
 	<div class="container">
-	<br>
+		<br>
 		<h1>Edição de Produto</h1>
 		<form action="produto" method="post">
 			<input type="hidden" value="editar" name="acao"> <input
-				type="hidden" value="${produto.codigo }" name="codigo">
+				type="hidden" value="${produto.codigo}" name="codigo">
 			<div class="form-group">
 				<label for="id-nome">Nome</label> <input type="text" name="nome"
 					id="id-nome" class="form-control" value="${produto.nome }">
@@ -50,8 +50,21 @@
 					</c:forEach>
 				</select>
 			</div>
-			<br>
-			<input type="submit" value="Salvar" class="btn btn-primary">
+			<div class="form-group">
+				<label for="id-marca">Marca</label> <select name="marca"
+					id="id-marca" class="form-control">
+					<option value="0">Selecione</option>
+					<c:forEach items="${marcas }" var="m">
+						<c:if test="${m.id == produto.marca.id }">
+							<option value="${m.id }" selected>${m.nome }</option>
+						</c:if>
+						<c:if test="${m.id != produto.marca.id}">
+							<option value="${m.id }">${m.nome }</option>
+						</c:if>
+					</c:forEach>
+				</select>
+			</div>
+			<br> <input type="submit" value="Salvar" class="btn btn-primary">
 			<a href="produto?acao=listar" class="btn btn-danger">Cancelar</a>
 		</form>
 	</div>
