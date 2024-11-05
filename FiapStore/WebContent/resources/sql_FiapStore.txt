@@ -80,7 +80,7 @@ BEGIN
 END;
 /
 
-insert into tb_usuario(email, senha) values ('emerson@gmail.com', 'e10adc3949ba59abbe56e057f20f883e');
+insert into tb_usuario(email, senha) values ('badu.arthur@gmail.com', 'e10adc3949ba59abbe56e057f20f883e');
 
 insert into tb_categoria (nome_categoria) values ('Eletrônicos');
 insert into tb_categoria (nome_categoria) values ('Alimentos');

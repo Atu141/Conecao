@@ -1,52 +1,83 @@
 package br.com.fiap.teste;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Calendar;
 import java.util.List;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import br.com.fiap.dao.CategoriaDAO;
+import br.com.fiap.dao.MarcaDAO;
 import br.com.fiap.dao.ProdutoDAO;
 import br.com.fiap.exception.DBException;
 import br.com.fiap.factory.DAOFactory;
+import br.com.fiap.model.Categoria;
+import br.com.fiap.model.Marca;
 import br.com.fiap.model.Produto;
 
 public class ProdutoDAOTeste {
 
-	public static void main(String[] args) {
+	private ProdutoDAO produtoDAO;
+	private CategoriaDAO categoriaDAO;
+	private MarcaDAO marcaDAO;
+	private Produto produto;
 
-		ProdutoDAO dao = DAOFactory.getProdutoDAO();
+	@Before
+	public void setUp() {
+		produtoDAO = DAOFactory.getProdutoDAO();
+		categoriaDAO = DAOFactory.getCategoriaDAO();
+		marcaDAO = DAOFactory.getMarcaDAO();
+		// Recupera uma categoria e marca já existente no banco de dados
+		List<Categoria> categorias = categoriaDAO.listarTodas();
+		List<Marca> marcas = marcaDAO.listarTodas();
+		// Certifique-se de que existe categorias e marcas para o testes
+		assertTrue("O banco de dados precisa ter ao menos uma categoraia cadastrada", !categorias.isEmpty());
+		assertTrue("O banco de dados precisa ter ao menos uma marca cadastrada", !marcas.isEmpty());
+		Categoria categoria = categorias.get(1);
+		Marca marca = marcas.get(1);
+		// Inicializa o produto com a categoria e marca recuperadas
+		produto = new Produto("TV Samsung", 5000, Calendar.getInstance(), 50);
+		produto.setCategoria(categoria);
+		produto.setMarca(marca);
+	}
 
-		// Cadastrar um produto
-		Produto produto = new Produto("TV Samsung", 5000, Calendar.getInstance(), 50);
+	@After
+	public void tearDown() {
 		try {
-			dao.cadastrar(produto);
-			System.out.println("Produto cadastrado.");
-		} catch (DBException e) {
-			e.printStackTrace();
-		}
-
-		// Buscar um produto pelo código e atualizar
-		produto = dao.buscar(1);
-		produto.setNome("TV Samsung 65'");
-		produto.setValor(5250);
-		try {
-			dao.atualizar(produto);
-			System.out.println("Produto atualizado.");
-		} catch (DBException e) {
-			e.printStackTrace();
-		}
-
-		// Listar os produtos
-		List<Produto> lista = dao.listar();
-		for (Produto item : lista) {
-			System.out.println(item.getNome() + " " + item.getQuantidade() + " " + item.getValor());
-		}
-
-		// Remover um produto
-		try {
-			dao.remover(1);
-			System.out.println("Produto removido.");
+			if (produto != null && produto.getCodigo() != 0) {
+				produtoDAO.remover(produto.getCodigo());
+			}
 		} catch (DBException e) {
 			e.printStackTrace();
 		}
 	}
 
+	@Test
+	public void testListarTodos() {
+		try {
+			produtoDAO.cadastrar(produto);
+			List<Produto> lista = produtoDAO.listarTodos();
+			assertNotNull("A lista de produtos não deve ser nula", lista);
+			assertTrue("A lista de produtos deve conter itens", lista.size() > 0);
+		} catch (DBException e) {
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testRemoverProduto() {
+		try {
+			produtoDAO.cadastrar(produto);
+			produtoDAO.remover(produto.getCodigo());
+			Produto produtoRemovido = produtoDAO.listarPorId(produto.getCodigo());
+			assertNull("O produto deve ser removido",produtoRemovido);
+		} catch (DBException e) {
+			e.printStackTrace();
+		}
+	}
 }
