@@ -16,27 +16,20 @@ public class OracleUsuarioDAO implements UsuarioDAO {
 
 	@Override
 	public boolean validarUsuario(Usuario usuario) {
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
 		try {
 			conexao = ConnectionFactory.getInstance().getConnection();
-			stmt = conexao.prepareStatement("SELECT * FROM TB_USUARIO WHERE EMAIL = ? AND SENHA = ?");
+			PreparedStatement stmt = conexao.prepareStatement("SELECT * FROM TB_USUARIO WHERE EMAIL = ? AND SENHA = ?");
 			stmt.setString(1, usuario.getEmail());
 			stmt.setString(2, usuario.getSenha());
-			rs = stmt.executeQuery();
+			ResultSet rs = stmt.executeQuery();
 			if (rs.next()) {
 				return true;
 			}
+			stmt.close();
+			rs.close();
+			conexao.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
-		} finally {
-			try {
-				stmt.close();
-				rs.close();
-				conexao.close();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
 		}
 		return false;
 	}

@@ -6,13 +6,12 @@ public class Marca {
 	private int id;
 
 	public Marca() {
-		super();
 	}
 
-	public Marca(String nome, String paisOrigem, int id, String descricao) {
+	public Marca(int id, String nome, String paisOrigem, String descricao) {
+		this.id = id;
 		this.nome = nome;
 		this.paisOrigem = paisOrigem;
-		this.id = id;
 		this.descricao = descricao;
 	}
 

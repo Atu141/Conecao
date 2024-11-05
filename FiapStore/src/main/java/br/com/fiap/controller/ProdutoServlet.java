@@ -39,7 +39,6 @@ public class ProdutoServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String acao = request.getParameter("acao");
-
 		switch (acao) {
 		case "cadastrar":
 			cadastrar(request, response);
@@ -59,7 +58,6 @@ public class ProdutoServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		String acao = request.getParameter("acao");
-
 		switch (acao) {
 		case "listar":
 			listar(request, response);
@@ -81,21 +79,19 @@ public class ProdutoServlet extends HttpServlet {
 	}
 
 	private void carregarOpcoesCategoria(HttpServletRequest request) {
-		List<Categoria> lista = categoriaDao.listar();
+		List<Categoria> lista = categoriaDao.listarTodas();
 		request.setAttribute("categorias", lista);
 	}
-	
+
 	private void carregarOpcoesMarca(HttpServletRequest request) {
-		List<Marca> lista = marcaDao.listar();
+		List<Marca> lista = marcaDao.listarTodas();
 		request.setAttribute("marcas", lista);
 	}
 
 	private void abrirFormEdicao(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		int id = Integer.parseInt(request.getParameter("codigo"));
-		Produto produto = dao.buscar(id);
-		Marca marca = marcaDao.buscar(id);
-		request.setAttribute("marca", marca);
+		Produto produto = dao.listarPorId(id);
 		request.setAttribute("produto", produto);
 		carregarOpcoesCategoria(request);
 		carregarOpcoesMarca(request);
@@ -103,10 +99,8 @@ public class ProdutoServlet extends HttpServlet {
 	}
 
 	private void listar(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		List<Produto> lista = dao.listar();
-		List<Marca> marca = marcaDao.listar();
+		List<Produto> lista = dao.listarTodos();
 		request.setAttribute("produtos", lista);
-		request.setAttribute("marca", marca);
 		request.getRequestDispatcher("lista-produto.jsp").forward(request, response);
 	}
 
@@ -150,22 +144,14 @@ public class ProdutoServlet extends HttpServlet {
 			Calendar fabricacao = Calendar.getInstance();
 			fabricacao.setTime(format.parse(request.getParameter("fabricacao")));
 			int codigoCategoria = Integer.parseInt(request.getParameter("categoria"));
-			int idMarca = Integer.parseInt(request.getParameter("marca"));
-
-			Categoria categoria = new Categoria();
-			categoria.setCodigo(codigoCategoria);
-			
-			Marca marca = marcaDao.buscar(idMarca);
-			System.out.println(idMarca);
-			System.out.println(marca.getNome());
-
+			int codigoMarca = Integer.parseInt(request.getParameter("marca"));
+			Categoria categoria = categoriaDao.listarPorId(codigoCategoria);
+			Marca marca = marcaDao.listarPorId(codigoMarca);
 			Produto produto = new Produto(nome, preco, fabricacao, quantidade);
-			produto.setCategoria(categoria);
 			produto.setCodigo(codigo);
+			produto.setCategoria(categoria);
 			produto.setMarca(marca);
-			
 			dao.atualizar(produto);
-
 			request.setAttribute("msg", "Produto atualizado!");
 		} catch (DBException db) {
 			db.printStackTrace();

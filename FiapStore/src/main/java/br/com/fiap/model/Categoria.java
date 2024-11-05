@@ -6,11 +6,9 @@ public class Categoria {
 	private String nome;
 
 	public Categoria() {
-		super();
 	}
 
 	public Categoria(int codigo, String nome) {
-		super();
 		this.codigo = codigo;
 		this.nome = nome;
 	}
